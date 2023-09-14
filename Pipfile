@@ -10,6 +10,7 @@ ipdb = "*"
 faker = "*"
 prettycli = "*"
 simple-term-menu = "*"
+maskpass = "*"
 
 [dev-packages]
 

@@ -1,15 +1,15 @@
 from db.models import Base, User, Contact
 import time
+import maskpass
 import sys
-
-# from db.hash import hash_password
+from db.hash import hash_password
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from simple_term_menu import TerminalMenu
 from prettycli import red
 
 engine = create_engine("sqlite:///db/user_contacts.db")
-# Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -35,7 +35,15 @@ def clear_screen(lines):
 
 
 def sign_up():
-    pass
+    print("Please input details in order to Sign up for App.")
+    username = input("Enter Username: ")
+    password = hash_password(input("Enter Password: "))
+    print(password)
+    email = input("Enter Your email: ")
+    user = User(username=username, password=password, email=email)
+
+    session.add(user)
+    session.commit()
 
 
 def handle_login():
