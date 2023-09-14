@@ -102,7 +102,19 @@ def show_contact(contact):
 
 
 def search_contact(user):
-    pass
+    search = input("Enter a name to search for details: ")
+    contacts = (
+        session.query(Contact)
+        .filter_by(user=user)
+        .filter(Contact.name.ilike(f"%{search}%"))
+        .all()
+    )
+    session.close()
+    if not contacts:
+        print(f"No contacts found for '{search}'.")
+        return
+    for contact in contacts:
+        show_contact(contact)
 
 
 def add_new_contact(user):
