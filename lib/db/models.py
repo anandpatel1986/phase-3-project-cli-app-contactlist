@@ -13,6 +13,9 @@ class User(Base):
     email = Column(String(50))
     contacts = relationship("Contact", back_populates="user")
 
+    def __repr__(self):
+        return f"Username: {self.username}, email: {self.email}"
+
 
 class Contact(Base):
     __tablename__ = "contacts"
@@ -25,3 +28,12 @@ class Contact(Base):
     address = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="contacts")
+
+    def __repr__(self):
+        return (
+            f"Contact Details of : {self.name}"
+            + f"Phone: {self.phone}"
+            + f"email : {self.email}"
+            + f"category : {self.category}"
+            + f"Address: {self.address}"
+        )
