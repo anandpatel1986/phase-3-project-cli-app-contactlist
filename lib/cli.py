@@ -6,7 +6,7 @@ from db.hash import hash_password
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from simple_term_menu import TerminalMenu
-from prettycli import red
+from prettycli import red, green
 
 engine = create_engine("sqlite:///db/user_contacts.db")
 Base.metadata.create_all(engine)
@@ -84,7 +84,21 @@ def render_home_page(user):
 
 
 def view_all_contacts(user):
-    pass
+    contacts = session.query(Contact).filter_by(user=user).all()
+    session.close()
+    if not contacts:
+        print("No contacts found.")
+        return
+    for contact in contacts:
+        show_contact(contact)
+
+
+def show_contact(contact):
+    print(green(f"< Name : {contact.name}"))
+    print(f"   Phone: {contact.phone}")
+    print(f"   Email: {contact.email}")
+    print(f"   Category: {contact.category}")
+    print(f"   Address: {contact.address} >\n")
 
 
 def search_contact(user):
