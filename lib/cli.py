@@ -20,11 +20,11 @@ def start():
     print(red("Welcome to Contact storage App"))
     options = ["Sign Up", "Login", "Exit"]
     terminal_menu = TerminalMenu(options)
-    menu_entry_index = terminal_menu.show()
+    choice = terminal_menu.show()
 
-    if options[menu_entry_index] == "Sign Up":
+    if choice == 0:
         sign_up()
-    elif options[menu_entry_index] == "Login":
+    elif choice == 1:
         handle_login()
     else:
         exit()
@@ -58,12 +58,45 @@ def handle_login():
     session.close()
 
     if user:
-        print("Loading main page after login.")
+        render_home_page(user)
     else:
         print("Invalid credentials Entered. Please start again...")
         time.sleep(2)
         # if wrong credentials then user need to go back to main page for signup or login or exit
         start()
+
+
+def render_home_page(user):
+    clear_screen(10)
+    print(f"Welcome {user.username}")
+    print("Please choose from below options : ")
+    options = ["View all contacts", "Search contact", "Add new contact", "Logout"]
+    terminal_menu = TerminalMenu(options)
+    choice = terminal_menu.show()
+    if choice == 0:
+        view_all_contacts(user)
+    elif choice == 1:
+        search_contact(user)
+    elif choice == 2:
+        add_new_contact(user)
+    elif choice == 3:
+        log_out(user)
+
+
+def view_all_contacts(user):
+    pass
+
+
+def search_contact(user):
+    pass
+
+
+def add_new_contact(user):
+    pass
+
+
+def log_out(user):
+    pass
 
 
 def exit():
