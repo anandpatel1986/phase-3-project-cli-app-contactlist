@@ -15,7 +15,7 @@ session = Session()
 
 
 def start():
-    clear_screen(30)
+    clear_screen(10)
 
     print(red("Welcome to Contact storage App"))
     options = ["Sign Up", "Login", "Exit"]
@@ -51,7 +51,19 @@ def sign_up():
 
 
 def handle_login():
-    pass
+    print("Please Enter Username and password to Login.")
+    username = input("Username: ")
+    password = hash_password(maskpass.askpass())
+    user = session.query(User).filter_by(username=username, password=password).first()
+    session.close()
+
+    if user:
+        print("Loading main page after login.")
+    else:
+        print("Invalid credentials Entered. Please start again...")
+        time.sleep(2)
+        # if wrong credentials then user need to go back to main page for signup or login or exit
+        start()
 
 
 def exit():
