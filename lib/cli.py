@@ -36,14 +36,18 @@ def clear_screen(lines):
 
 def sign_up():
     print("Please input details in order to Sign up for App.")
+
     username = input("Enter Username: ")
-    password = hash_password(input("Enter Password: "))
-    print(password)
+    password = hash_password(maskpass.askpass())
+    # mask password while user enter and convert it to hash
     email = input("Enter Your email: ")
     user = User(username=username, password=password, email=email)
 
-    session.add(user)
-    session.commit()
+    # session.add(user)
+    # session.commit()
+    # session.close()
+    print("Thank you for SignUp. Please Login now..")
+    handle_login()
 
 
 def handle_login():
