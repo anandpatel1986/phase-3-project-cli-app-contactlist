@@ -70,7 +70,14 @@ def render_home_page(user):
     clear_screen(10)
     print(f"Welcome {user.username}")
     print("Please choose from below options : ")
-    options = ["View all contacts", "Search contact", "Add new contact", "Logout"]
+    options = [
+        "View all contacts",
+        "Search contact",
+        "Edit contact",
+        "Delete contact",
+        "Add new contact",
+        "Logout",
+    ]
     terminal_menu = TerminalMenu(options)
     choice = terminal_menu.show()
     if choice == 0:
@@ -78,8 +85,12 @@ def render_home_page(user):
     elif choice == 1:
         search_contact(user)
     elif choice == 2:
-        add_new_contact(user)
+        edit_contact(user)
     elif choice == 3:
+        delete_contact(user)
+    elif choice == 4:
+        add_new_contact(user)
+    elif choice == 5:
         log_out(user)
 
 
@@ -115,6 +126,14 @@ def search_contact(user):
         return
     for contact in contacts:
         show_contact(contact)
+
+
+def edit_contact(user):
+    pass
+
+
+def delete_contact(user):
+    pass
 
 
 def add_new_contact(user):
