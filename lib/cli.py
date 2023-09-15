@@ -169,7 +169,7 @@ def edit_contact(user):
         for contact in contacts:
             show_contact(contact)
             id_captured.append(contact.id)
-        contact_id = input("Enter the ID of the contact you want to edit: ")
+        contact_id = int(input("Enter the ID of the contact you want to edit: "))
         if contact_id in id_captured:
             contact_to_be_edited = (
                 session.query(Contact).filter_by(id=contact_id, user=user).first()
@@ -207,7 +207,7 @@ def delete_contact(user):
             show_contact(contact)
             id_captured.append(contact.id)
 
-        contact_id = input("Enter the ID of the contact you want to delete: ")
+        contact_id = int(input("Enter the ID of the contact you want to delete: "))
 
         if contact_id in id_captured:
             contact_to_be_deleted = (
