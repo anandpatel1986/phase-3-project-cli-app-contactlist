@@ -163,7 +163,29 @@ def edit_contact(user):
 
 
 def delete_contact(user):
-    pass
+    search = input("Enter a name of the contact you want to delete: ")
+    contacts = (
+        session.query(Contact)
+        .filter_by(user=user)
+        .filter(Contact.name.ilike(f"%{search}%"))
+        .all()
+    )
+    if not contacts:
+        print("Contact not found.")
+        time.sleep(2)
+        return
+    for contact in contacts:
+        show_contact(contact)
+    contact_id = input("Enter the ID of the contact you want to delete: ")
+    contact_to_be_deleted = (
+        session.query(Contact).filter_by(id=contact_id, user=user).first()
+    )
+    session.delete(contact_to_be_deleted)
+    session.commit()
+    session.close()
+    print("Contact deleted successfully. Redirecting to Home page...")
+    time.sleep(2)
+    render_home_page(user)
 
 
 def add_new_contact(user):
