@@ -105,7 +105,8 @@ def view_all_contacts(user):
 
 
 def show_contact(contact):
-    print(green(f"< Name : {contact.name}"))
+    print(green(f"< Contact ID : {contact.id}"))
+    print(f"   Name : {contact.name}")
     print(f"   Phone: {contact.phone}")
     print(f"   Email: {contact.email}")
     print(f"   Category: {contact.category}")
@@ -123,13 +124,42 @@ def search_contact(user):
     session.close()
     if not contacts:
         print(f"No contacts found for '{search}'.")
+        time.sleep(2)
         return
     for contact in contacts:
         show_contact(contact)
 
 
 def edit_contact(user):
-    pass
+    search = input("Enter a name of the contact you want to edit: ")
+    contacts = (
+        session.query(Contact)
+        .filter_by(user=user)
+        .filter(Contact.name.ilike(f"%{search}%"))
+        .all()
+    )
+    if not contacts:
+        print("Contact not found.")
+        time.sleep(2)
+        return
+    for contact in contacts:
+        show_contact(contact)
+    contact_id = input("Enter the ID of the contact you want to edit: ")
+    contact_to_be_edited = (
+        session.query(Contact).filter_by(id=contact_id, user=user).first()
+    )
+
+    field = input(
+        "Enter the field you want to edit (name/phone/email/category/address): "
+    ).lower()
+    new_value = input(f"Enter the new {field}: ")
+
+    setattr(contact_to_be_edited, field, new_value)
+    session.commit()
+    session.close()
+    print("Contact updated successfully. Redirecting to Home page...")
+    time.sleep(2)
+    render_home_page(user)
 
 
 def delete_contact(user):
