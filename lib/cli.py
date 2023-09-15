@@ -178,29 +178,35 @@ def edit_contact(user):
 
         setattr(contact_to_be_edited, field, new_value)
         session.commit()
-        print("Contact updated successfully. Redirecting to Home page...")
-        time.sleep(2)
-        render_home_page(user)
+        print(
+            f"Contact detail for {search} updated successfully. Redirecting to Home page..."
+        )
+        time.sleep(1)
+        user_home_page(user)
 
 
 def delete_contact(user):
     search = input("Enter a name of the contact you want to delete: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print("Contact not found.")
-        time.sleep(2)
-        return
-    for contact in contacts:
-        show_contact(contact)
-    contact_id = input("Enter the ID of the contact you want to delete: ")
-    contact_to_be_deleted = (
-        session.query(Contact).filter_by(id=contact_id, user=user).first()
-    )
-    session.delete(contact_to_be_deleted)
-    session.commit()
-    print("Contact deleted successfully. Redirecting to Home page...")
-    time.sleep(2)
-    render_home_page(user)
+        print(f"No contacts found for '{search}'. Home page..")
+        time.sleep(1)
+        user_home_page(user)
+    else:
+        print(f"Total {len(contacts)} contacts are found for {search}.")
+        for contact in contacts:
+            show_contact(contact)
+        contact_id = input("Enter the ID of the contact you want to delete: ")
+        contact_to_be_deleted = (
+            session.query(Contact).filter_by(id=contact_id, user=user).first()
+        )
+        session.delete(contact_to_be_deleted)
+        session.commit()
+        print(
+            f"Contact detail for {search} deleted successfully. Redirecting to Home page..."
+        )
+        time.sleep(1)
+        user_home_page(user)
 
 
 def add_new_contact(user):
@@ -221,10 +227,11 @@ def add_new_contact(user):
     )
     session.add(new_contact)
     session.commit()
+    print("New contact added successfully. Showing new contact : ")
     show_contact(new_contact)
-    print("New contact added successfully. Redirecting to Home page...")
-    time.sleep(2)
-    render_home_page(user)
+    print("Redirecting to Home page...")
+    time.sleep(1)
+    user_home_page(user)
 
 
 def log_out():
