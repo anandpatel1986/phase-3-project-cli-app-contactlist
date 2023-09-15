@@ -214,7 +214,9 @@ def add_new_contact(user):
 
 
 def log_out(user):
-    pass
+    print("You are successfully logout from app. Thanks for Using Contact Storage App.")
+    time.sleep(3)
+    start()
 
 
 def exit():
