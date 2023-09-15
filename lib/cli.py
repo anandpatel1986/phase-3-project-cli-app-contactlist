@@ -1,5 +1,5 @@
 from db.models import Base, User, Contact
-from helpers import clear_screen, exit_app, welcome_banner
+from helpers import clear_screen, exit_app, welcome_banner, app_start_termical
 import time
 import maskpass
 import sys
@@ -18,17 +18,18 @@ session = Session()
 def start():
     clear_screen(20)
     welcome_banner()
+    app_start_termical()
 
-    options = ["Sign Up", "Login", "Exit"]
-    terminal_menu = TerminalMenu(options)
-    choice = terminal_menu.show()
+    # options = ["Sign Up", "Login", "Exit"]
+    # terminal_menu = TerminalMenu(options)
+    # selection = terminal_menu.show()
 
-    if choice == 0:
-        sign_up()
-    elif choice == 1:
-        handle_login()
-    else:
-        exit_app()
+    # if selection == 0:
+    #     sign_up()
+    # elif selection == 1:
+    #     handle_login()
+    # else:
+    #     exit_app()
 
 
 def sign_up():
