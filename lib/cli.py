@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from simple_term_menu import TerminalMenu
-from prettycli import red, green, blue
+from prettycli import red, green, blue, yellow
 
 engine = create_engine("sqlite:///db/user_contacts.db")
 Session = sessionmaker(bind=engine)
@@ -58,12 +58,12 @@ def sign_up():
 
     session.add(user)
     session.commit()
-    print("Thank you for SignUp. Please Login now..")
+    print(yellow("Thank you for SignUp. Please Login now.."))
     handle_login()
 
 
 def handle_login():
-    print("Please Enter Username and password to Login.")
+    print(yellow("Please Enter Username and password to Login."))
     username = input("Username: ")
     password = hash_password(maskpass.askpass())
     user = session.query(User).filter_by(username=username, password=password).first()
@@ -71,7 +71,7 @@ def handle_login():
     if user:
         render_home_page(user)
     else:
-        print("Invalid credentials Entered. Redirecting to start Terminal...")
+        print(red("Invalid credentials Entered. Redirecting to start Terminal..."))
         time.sleep(2)
         # if wrong credentials then user need to go back to main page for signup, login or exit
         start()
@@ -79,12 +79,12 @@ def handle_login():
 
 def render_home_page(user):
     clear_screen(20)
-    print(f"Welcome {user.username}")
+    print(green(f"Welcome {user.username}"))
     user_home_page(user)
 
 
 def user_home_page(user):
-    print("Please choose from below options : ")
+    print(yellow("Please choose from below options : "))
     options = [
         "View all contacts",
         "Search contact",
@@ -113,11 +113,11 @@ def view_all_contacts(user):
     clear_screen(10)
     contacts = session.query(Contact).filter_by(user=user).all()
     if not contacts:
-        print("No contacts found. Redirecting to home page..")
+        print(red("No contacts found. Redirecting to home page.."))
         time.sleep(1)
         user_home_page(user)
     else:
-        print(f"Total {len(contacts)} contacts are found: ")
+        print(green(f"Total {len(contacts)} contacts are found: "))
         for contact in contacts:
             show_contact(contact)
         user_home_page(user)
@@ -125,11 +125,11 @@ def view_all_contacts(user):
 
 def show_contact(contact):
     print(green(f"< Contact ID : {contact.id}"))
-    print(f"   Name : {contact.name}")
-    print(f"   Phone: {contact.phone}")
-    print(f"   Email: {contact.email}")
-    print(f"   Category: {contact.category}")
-    print(f"   Address: {contact.address} >\n")
+    print(green(f"   Name : {contact.name}"))
+    print(green(f"   Phone: {contact.phone}"))
+    print(green(f"   Email: {contact.email}"))
+    print(green(f"   Category: {contact.category}"))
+    print(green(f"   Address: {contact.address} >\n"))
 
 
 def search_contact_by_name(user, search):
@@ -147,11 +147,11 @@ def search_contact(user):
     contacts = search_contact_by_name(user, search)
 
     if not contacts:
-        print(f"No contacts found for '{search}'. Home page..")
+        print(red(f"No contacts found for '{search}'. Home page.."))
         time.sleep(1)
         user_home_page(user)
     else:
-        print(f"Total {len(contacts)} contacts are found for {search}:")
+        print(green(f"Total {len(contacts)} contacts are found for {search}:"))
         for contact in contacts:
             show_contact(contact)
         user_home_page(user)
@@ -161,7 +161,7 @@ def edit_contact(user):
     search = input("Enter a name of the contact you want to edit: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print(f"No contacts found for '{search}'. Home page..")
+        print(red(f"No contacts found for '{search}'. Home page.."))
         time.sleep(1)
         user_home_page(user)
     else:
@@ -179,7 +179,9 @@ def edit_contact(user):
         setattr(contact_to_be_edited, field, new_value)
         session.commit()
         print(
-            f"Contact detail for {search} updated successfully. Redirecting to Home page..."
+            green(
+                f"Contact detail for {search} updated successfully. Redirecting to Home page..."
+            )
         )
         time.sleep(1)
         user_home_page(user)
@@ -189,11 +191,11 @@ def delete_contact(user):
     search = input("Enter a name of the contact you want to delete: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print(f"No contacts found for '{search}'. Home page..")
+        print(red(f"No contacts found for '{search}'. Home page.."))
         time.sleep(1)
         user_home_page(user)
     else:
-        print(f"Total {len(contacts)} contacts are found for {search}.")
+        print(green(f"Total {len(contacts)} contacts are found for {search}."))
         for contact in contacts:
             show_contact(contact)
         contact_id = input("Enter the ID of the contact you want to delete: ")
@@ -203,14 +205,16 @@ def delete_contact(user):
         session.delete(contact_to_be_deleted)
         session.commit()
         print(
-            f"Contact detail for {search} deleted successfully. Redirecting to Home page..."
+            green(
+                f"Contact detail for {search} deleted successfully. Redirecting to Home page..."
+            )
         )
         time.sleep(1)
         user_home_page(user)
 
 
 def add_new_contact(user):
-    print("Enter required details to add new contact.")
+    print(yellow("Enter required details to add new contact."))
     name = input("Name: ")
     phone = input("Phone: ")
     email = input("Email: ")
@@ -227,9 +231,9 @@ def add_new_contact(user):
     )
     session.add(new_contact)
     session.commit()
-    print("New contact added successfully. Showing new contact : ")
+    print(green("New contact added successfully. Showing new contact : "))
     show_contact(new_contact)
-    print("Redirecting to Home page...")
+    print(yellow("Redirecting to Home page..."))
     time.sleep(1)
     user_home_page(user)
 
