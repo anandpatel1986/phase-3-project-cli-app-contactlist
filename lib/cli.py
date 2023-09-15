@@ -118,7 +118,7 @@ def view_all_contacts(user):
     else:
         for contact in contacts:
             show_contact(contact)
-        print(green(f"Total {len(contacts)} contacts are found: "))
+        print(yellow(f"Total {len(contacts)} contacts are found: "))
         go_back_logout(user)
 
 
@@ -165,21 +165,31 @@ def edit_contact(user):
         )
         go_back_logout(user)
     else:
+        id_captured = []
         for contact in contacts:
             show_contact(contact)
+            id_captured.append(contact.id)
         contact_id = input("Enter the ID of the contact you want to edit: ")
-        contact_to_be_edited = (
-            session.query(Contact).filter_by(id=contact_id, user=user).first()
-        )
-        field = input(
-            "Enter the field you want to edit (name/phone/email/category/address): "
-        ).lower()
-        new_value = input(f"Enter the new {field}: ")
+        if contact_id in id_captured:
+            contact_to_be_edited = (
+                session.query(Contact).filter_by(id=contact_id, user=user).first()
+            )
+            field = input(
+                "Enter the field you want to edit (name/phone/email/category/address): "
+            ).lower()
+            new_value = input(f"Enter the new {field}: ")
 
-        setattr(contact_to_be_edited, field, new_value)
-        session.commit()
-        print(green(f"Contact detail for {search} updated successfully."))
-        go_back_logout(user)
+            setattr(contact_to_be_edited, field, new_value)
+            session.commit()
+            print(green(f"Contact detail for {search} updated successfully."))
+            go_back_logout(user)
+        else:
+            print(
+                red(
+                    "Incorrect id entered. Please go back to home page for more options."
+                )
+            )
+            go_back_logout(user)
 
 
 def delete_contact(user):
@@ -192,16 +202,28 @@ def delete_contact(user):
         go_back_logout(user)
     else:
         print(green(f"Total {len(contacts)} contacts are found for {search}."))
+        id_captured = []
         for contact in contacts:
             show_contact(contact)
+            id_captured.append(contact.id)
+
         contact_id = input("Enter the ID of the contact you want to delete: ")
-        contact_to_be_deleted = (
-            session.query(Contact).filter_by(id=contact_id, user=user).first()
-        )
-        session.delete(contact_to_be_deleted)
-        session.commit()
-        print(green(f"Contact detail for {search} deleted successfully."))
-        go_back_logout(user)
+
+        if contact_id in id_captured:
+            contact_to_be_deleted = (
+                session.query(Contact).filter_by(id=contact_id, user=user).first()
+            )
+            session.delete(contact_to_be_deleted)
+            session.commit()
+            print(green(f"Contact detail for {search} deleted successfully."))
+            go_back_logout(user)
+        else:
+            print(
+                red(
+                    "Incorrect id entered. Please go back to home page for more options."
+                )
+            )
+            go_back_logout(user)
 
 
 def add_new_contact(user):
@@ -229,13 +251,14 @@ def add_new_contact(user):
 
 # common function for user to go to home page or logout after each action
 def go_back_logout(user):
-    user_choice = input("Enter b to go back to Home page or l to logout : ")
+    user_choice = input(red("Enter b to go back to Home page or l to logout : "))
     if user_choice.lower() == "b":
         user_home_page(user)
     elif user_choice.lower() == "l":
-        log_out(user)
+        log_out()
     else:
         print(red("Please enter valid input in order to procees further !!"))
+        go_back_logout(user)
 
 
 def log_out():
