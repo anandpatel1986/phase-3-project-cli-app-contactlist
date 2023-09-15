@@ -110,7 +110,7 @@ def user_home_page(user):
 
 
 def view_all_contacts(user):
-    clear_screen(10)
+    clear_screen(5)
     contacts = session.query(Contact).filter_by(user=user).all()
     if not contacts:
         print(red("No contacts found. Redirecting to home page.."))
@@ -120,7 +120,7 @@ def view_all_contacts(user):
         print(green(f"Total {len(contacts)} contacts are found: "))
         for contact in contacts:
             show_contact(contact)
-        user_home_page(user)
+        go_back_logout(user)
 
 
 def show_contact(contact):
@@ -147,21 +147,20 @@ def search_contact(user):
     contacts = search_contact_by_name(user, search)
 
     if not contacts:
-        print(red(f"No contacts found for '{search}'. Home page.."))
-        time.sleep(1)
-        user_home_page(user)
+        print(red(f"No contacts found for '{search}'."))
+        go_back_logout(user)
     else:
         print(green(f"Total {len(contacts)} contacts are found for {search}:"))
         for contact in contacts:
             show_contact(contact)
-        user_home_page(user)
+        go_back_logout(user)
 
 
 def edit_contact(user):
     search = input("Enter a name of the contact you want to edit: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print(red(f"No contacts found for '{search}'. Home page.."))
+        print(red(f"No contacts found for '{search}'. Redirecting to Home page.."))
         time.sleep(1)
         user_home_page(user)
     else:
@@ -178,20 +177,15 @@ def edit_contact(user):
 
         setattr(contact_to_be_edited, field, new_value)
         session.commit()
-        print(
-            green(
-                f"Contact detail for {search} updated successfully. Redirecting to Home page..."
-            )
-        )
-        time.sleep(1)
-        user_home_page(user)
+        print(green(f"Contact detail for {search} updated successfully."))
+        go_back_logout(user)
 
 
 def delete_contact(user):
     search = input("Enter a name of the contact you want to delete: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print(red(f"No contacts found for '{search}'. Home page.."))
+        print(red(f"No contacts found for '{search}'. Redirecting to Home page.."))
         time.sleep(1)
         user_home_page(user)
     else:
@@ -204,13 +198,8 @@ def delete_contact(user):
         )
         session.delete(contact_to_be_deleted)
         session.commit()
-        print(
-            green(
-                f"Contact detail for {search} deleted successfully. Redirecting to Home page..."
-            )
-        )
-        time.sleep(1)
-        user_home_page(user)
+        print(green(f"Contact detail for {search} deleted successfully."))
+        go_back_logout(user)
 
 
 def add_new_contact(user):
@@ -233,15 +222,23 @@ def add_new_contact(user):
     session.commit()
     print(green("New contact added successfully. Showing new contact : "))
     show_contact(new_contact)
-    print(yellow("Redirecting to Home page..."))
-    time.sleep(1)
-    user_home_page(user)
+    go_back_logout(user)
+
+
+def go_back_logout(user):
+    user_choice = input("Enter b to go back to Home page or l to logout : ")
+    if user_choice.lower() == "b":
+        user_home_page(user)
+    elif user_choice.lower() == "l":
+        log_out(user)
+    else:
+        print(red("Please enter valid input in order to procees further !!"))
 
 
 def log_out():
     print("You are successfully logout from app. Thanks for Using Contact Storage App.")
     print("Redirecting to start Terminal...")
-    time.sleep(2)
+    time.sleep(1)
     app_start_termical()
 
 
