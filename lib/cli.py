@@ -189,7 +189,28 @@ def delete_contact(user):
 
 
 def add_new_contact(user):
-    pass
+    print("Enter required details to add new contact.")
+    name = input("Name: ")
+    phone = input("Phone: ")
+    email = input("Email: ")
+    category = input("Category from (work/family/friend/other): ")
+    address = input("Address: ")
+
+    new_contact = Contact(
+        name=name,
+        phone=phone,
+        email=email,
+        category=category,
+        address=address,
+        user=user,
+    )
+    session.add(new_contact)
+    session.commit()
+    show_contact(new_contact)
+    print("New contact added successfully. Redirecting to Home page...")
+    session.close()
+    time.sleep(2)
+    render_home_page(user)
 
 
 def log_out(user):
