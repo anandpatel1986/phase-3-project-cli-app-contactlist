@@ -1,14 +1,16 @@
 from db.models import Base, User, Contact
-from helpers import clear_screen, exit_app, welcome_banner, app_start_termical
+from helpers import clear_screen, welcome_banner, exit_app
+
 import time
 import maskpass
 import sys
 from db.hash import hash_password
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from simple_term_menu import TerminalMenu
-from prettycli import red, green
+from prettycli import red, green, blue
 
 engine = create_engine("sqlite:///db/user_contacts.db")
 Session = sessionmaker(bind=engine)
@@ -20,20 +22,33 @@ def start():
     welcome_banner()
     app_start_termical()
 
-    # options = ["Sign Up", "Login", "Exit"]
-    # terminal_menu = TerminalMenu(options)
-    # selection = terminal_menu.show()
 
-    # if selection == 0:
-    #     sign_up()
-    # elif selection == 1:
-    #     handle_login()
-    # else:
-    #     exit_app()
+def app_start_termical():
+    print(green("Please selection from below options in order to proceed further."))
+    options = ["Sign Up", "Login", "Exit"]
+    terminal_menu = TerminalMenu(
+        options,
+        menu_cursor_style=(
+            "fg_cyan",
+            "bold",
+        ),
+        menu_highlight_style=(
+            "fg_cyan",
+            "standout",
+        ),
+    )
+    selection = terminal_menu.show()
+
+    if selection == 0:
+        sign_up()
+    elif selection == 1:
+        handle_login()
+    else:
+        exit_app()
 
 
 def sign_up():
-    print("Please input details in order to Sign up for App.")
+    print(blue("Please input required details in order to Sign up for App."))
 
     username = input("Enter Username: ")
     password = hash_password(maskpass.askpass())
@@ -52,20 +67,23 @@ def handle_login():
     username = input("Username: ")
     password = hash_password(maskpass.askpass())
     user = session.query(User).filter_by(username=username, password=password).first()
-    session.close()
 
     if user:
         render_home_page(user)
     else:
-        print("Invalid credentials Entered. Please start again...")
+        print("Invalid credentials Entered. Redirecting to start Terminal...")
         time.sleep(2)
-        # if wrong credentials then user need to go back to main page for signup or login or exit
+        # if wrong credentials then user need to go back to main page for signup, login or exit
         start()
 
 
 def render_home_page(user):
-    clear_screen(10)
+    clear_screen(20)
     print(f"Welcome {user.username}")
+    user_home_page(user)
+
+
+def user_home_page(user):
     print("Please choose from below options : ")
     options = [
         "View all contacts",
@@ -79,7 +97,6 @@ def render_home_page(user):
     choice = terminal_menu.show()
     if choice == 0:
         view_all_contacts(user)
-        render_home_page(user)
     elif choice == 1:
         search_contact(user)
     elif choice == 2:
@@ -89,16 +106,21 @@ def render_home_page(user):
     elif choice == 4:
         add_new_contact(user)
     elif choice == 5:
-        log_out(user)
+        log_out()
 
 
 def view_all_contacts(user):
+    clear_screen(10)
     contacts = session.query(Contact).filter_by(user=user).all()
     if not contacts:
-        print("No contacts found.")
-        return
-    for contact in contacts:
-        show_contact(contact)
+        print("No contacts found. Redirecting to home page..")
+        time.sleep(1)
+        user_home_page(user)
+    else:
+        print(f"Total {len(contacts)} contacts are found: ")
+        for contact in contacts:
+            show_contact(contact)
+        user_home_page(user)
 
 
 def show_contact(contact):
@@ -110,61 +132,60 @@ def show_contact(contact):
     print(f"   Address: {contact.address} >\n")
 
 
-def search_contact(user):
-    search = input("Enter a name to search for details: ")
+def search_contact_by_name(user, search):
     contacts = (
         session.query(Contact)
         .filter_by(user=user)
         .filter(Contact.name.ilike(f"%{search}%"))
         .all()
     )
+    return contacts
+
+
+def search_contact(user):
+    search = input("Enter a name to search for contact details: ")
+    contacts = search_contact_by_name(user, search)
+
     if not contacts:
-        print(f"No contacts found for '{search}'.")
-        time.sleep(2)
-        return
-    for contact in contacts:
-        show_contact(contact)
+        print(f"No contacts found for '{search}'. Home page..")
+        time.sleep(1)
+        user_home_page(user)
+    else:
+        print(f"Total {len(contacts)} contacts are found for {search}:")
+        for contact in contacts:
+            show_contact(contact)
+        user_home_page(user)
 
 
 def edit_contact(user):
     search = input("Enter a name of the contact you want to edit: ")
-    contacts = (
-        session.query(Contact)
-        .filter_by(user=user)
-        .filter(Contact.name.ilike(f"%{search}%"))
-        .all()
-    )
+    contacts = search_contact_by_name(user, search)
     if not contacts:
-        print("Contact not found.")
+        print(f"No contacts found for '{search}'. Home page..")
+        time.sleep(1)
+        user_home_page(user)
+    else:
+        for contact in contacts:
+            show_contact(contact)
+        contact_id = input("Enter the ID of the contact you want to edit: ")
+        contact_to_be_edited = (
+            session.query(Contact).filter_by(id=contact_id, user=user).first()
+        )
+        field = input(
+            "Enter the field you want to edit (name/phone/email/category/address): "
+        ).lower()
+        new_value = input(f"Enter the new {field}: ")
+
+        setattr(contact_to_be_edited, field, new_value)
+        session.commit()
+        print("Contact updated successfully. Redirecting to Home page...")
         time.sleep(2)
-        return
-    for contact in contacts:
-        show_contact(contact)
-    contact_id = input("Enter the ID of the contact you want to edit: ")
-    contact_to_be_edited = (
-        session.query(Contact).filter_by(id=contact_id, user=user).first()
-    )
-
-    field = input(
-        "Enter the field you want to edit (name/phone/email/category/address): "
-    ).lower()
-    new_value = input(f"Enter the new {field}: ")
-
-    setattr(contact_to_be_edited, field, new_value)
-    session.commit()
-    print("Contact updated successfully. Redirecting to Home page...")
-    time.sleep(2)
-    render_home_page(user)
+        render_home_page(user)
 
 
 def delete_contact(user):
     search = input("Enter a name of the contact you want to delete: ")
-    contacts = (
-        session.query(Contact)
-        .filter_by(user=user)
-        .filter(Contact.name.ilike(f"%{search}%"))
-        .all()
-    )
+    contacts = search_contact_by_name(user, search)
     if not contacts:
         print("Contact not found.")
         time.sleep(2)
@@ -206,10 +227,11 @@ def add_new_contact(user):
     render_home_page(user)
 
 
-def log_out(user):
+def log_out():
     print("You are successfully logout from app. Thanks for Using Contact Storage App.")
-    time.sleep(3)
-    start()
+    print("Redirecting to start Terminal...")
+    time.sleep(2)
+    app_start_termical()
 
 
 start()

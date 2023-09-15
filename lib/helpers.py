@@ -1,20 +1,6 @@
 import sys
 import time
-from prettycli import red, green, yellow
-from simple_term_menu import TerminalMenu
-
-
-def app_start_termical():
-    options = ["Sign Up", "Login", "Exit"]
-    terminal_menu = TerminalMenu(options)
-    selection = terminal_menu.show()
-
-    # if selection == 0:
-    #     sign_up()
-    # elif selection == 1:
-    #     handle_login()
-    # else:
-    #     exit_app()
+from prettycli import yellow, blue
 
 
 def clear_screen(lines):
@@ -37,13 +23,13 @@ def exit_app():
 """
         )
     )
-    time.sleep(2)
+    time.sleep(1)
     sys.exit()
 
 
 def welcome_banner():
     print(
-        green(
+        blue(
             """
 
    __        __     _                                                                                              
