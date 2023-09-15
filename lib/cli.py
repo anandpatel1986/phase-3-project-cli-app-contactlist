@@ -1,23 +1,24 @@
 from db.models import Base, User, Contact
+from helpers import clear_screen, exit_app, welcome_banner
 import time
 import maskpass
 import sys
 from db.hash import hash_password
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from simple_term_menu import TerminalMenu
 from prettycli import red, green
 
 engine = create_engine("sqlite:///db/user_contacts.db")
-Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
 def start():
-    clear_screen(10)
+    clear_screen(20)
+    welcome_banner()
 
-    print(red("Welcome to Contact storage App"))
     options = ["Sign Up", "Login", "Exit"]
     terminal_menu = TerminalMenu(options)
     choice = terminal_menu.show()
@@ -27,11 +28,7 @@ def start():
     elif choice == 1:
         handle_login()
     else:
-        exit()
-
-
-def clear_screen(lines):
-    print("\n" * lines)
+        exit_app()
 
 
 def sign_up():
@@ -43,9 +40,8 @@ def sign_up():
     email = input("Enter Your email: ")
     user = User(username=username, password=password, email=email)
 
-    # session.add(user)
-    # session.commit()
-    # session.close()
+    session.add(user)
+    session.commit()
     print("Thank you for SignUp. Please Login now..")
     handle_login()
 
@@ -82,6 +78,7 @@ def render_home_page(user):
     choice = terminal_menu.show()
     if choice == 0:
         view_all_contacts(user)
+        render_home_page(user)
     elif choice == 1:
         search_contact(user)
     elif choice == 2:
@@ -96,7 +93,6 @@ def render_home_page(user):
 
 def view_all_contacts(user):
     contacts = session.query(Contact).filter_by(user=user).all()
-    session.close()
     if not contacts:
         print("No contacts found.")
         return
@@ -121,7 +117,6 @@ def search_contact(user):
         .filter(Contact.name.ilike(f"%{search}%"))
         .all()
     )
-    session.close()
     if not contacts:
         print(f"No contacts found for '{search}'.")
         time.sleep(2)
@@ -156,7 +151,6 @@ def edit_contact(user):
 
     setattr(contact_to_be_edited, field, new_value)
     session.commit()
-    session.close()
     print("Contact updated successfully. Redirecting to Home page...")
     time.sleep(2)
     render_home_page(user)
@@ -182,7 +176,6 @@ def delete_contact(user):
     )
     session.delete(contact_to_be_deleted)
     session.commit()
-    session.close()
     print("Contact deleted successfully. Redirecting to Home page...")
     time.sleep(2)
     render_home_page(user)
@@ -208,7 +201,6 @@ def add_new_contact(user):
     session.commit()
     show_contact(new_contact)
     print("New contact added successfully. Redirecting to Home page...")
-    session.close()
     time.sleep(2)
     render_home_page(user)
 
@@ -217,12 +209,6 @@ def log_out(user):
     print("You are successfully logout from app. Thanks for Using Contact Storage App.")
     time.sleep(3)
     start()
-
-
-def exit():
-    print("Exiting from app. Thanks for using Contact Storage App. Bye !!!")
-    time.sleep(2)
-    sys.exit()
 
 
 start()

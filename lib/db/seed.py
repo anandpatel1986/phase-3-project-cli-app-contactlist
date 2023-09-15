@@ -1,6 +1,7 @@
 from faker import Faker
 import random
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from hash import hash_password
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
