@@ -41,7 +41,7 @@ python cli.py
 
 You find video walkthrough on youtube:
 
-[![Contact Storage App](https://i9.ytimg.com/vi_webp/t305FdwBtHg/mq3.webp?sqp=COi99aUG-oaymwEmCMACELQB8quKqQMa8AEB-AH-CYACqAWKAgwIABABGGUgZShlMA8=&rs=AOn4CLCWaLLEHjUP7rMUOQhLOf7ghkN9Aw)](https://youtu.be/t305FdwBtHg)
+[link: Contact Storage App](https://youtu.be/i0Zm66BE3M4)
 
 ## Contributing
 
@@ -49,7 +49,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Roadmap
 
-More features can be added in future like User can send email to saved contacts, additional attributes (contact details) can be added and more contraints, validation can be added for email id, phone, username etc.
+More features can be added in future like User can send email to saved contacts, additional attributes (contact details) can be added and more contraints, validation can be added for email id, phone, username etc- user can input details in specific formate only.
 
 ## License
 
