@@ -113,13 +113,12 @@ def view_all_contacts(user):
     clear_screen(5)
     contacts = session.query(Contact).filter_by(user=user).all()
     if not contacts:
-        print(red("No contacts found. Redirecting to home page.."))
-        time.sleep(1)
-        user_home_page(user)
+        print(red("No contacts found. Go to home page for more options."))
+        go_back_logout(user)
     else:
-        print(green(f"Total {len(contacts)} contacts are found: "))
         for contact in contacts:
             show_contact(contact)
+        print(green(f"Total {len(contacts)} contacts are found: "))
         go_back_logout(user)
 
 
@@ -132,6 +131,7 @@ def show_contact(contact):
     print(green(f"   Address: {contact.address} >\n"))
 
 
+# common function for searching contacts by name
 def search_contact_by_name(user, search):
     contacts = (
         session.query(Contact)
@@ -160,9 +160,10 @@ def edit_contact(user):
     search = input("Enter a name of the contact you want to edit: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print(red(f"No contacts found for '{search}'. Redirecting to Home page.."))
-        time.sleep(1)
-        user_home_page(user)
+        print(
+            red(f"No contacts found for '{search}'. Go to Home page for more options")
+        )
+        go_back_logout(user)
     else:
         for contact in contacts:
             show_contact(contact)
@@ -185,9 +186,10 @@ def delete_contact(user):
     search = input("Enter a name of the contact you want to delete: ")
     contacts = search_contact_by_name(user, search)
     if not contacts:
-        print(red(f"No contacts found for '{search}'. Redirecting to Home page.."))
-        time.sleep(1)
-        user_home_page(user)
+        print(
+            red(f"No contacts found for '{search}'. Go to home page for more options")
+        )
+        go_back_logout(user)
     else:
         print(green(f"Total {len(contacts)} contacts are found for {search}."))
         for contact in contacts:
@@ -207,7 +209,7 @@ def add_new_contact(user):
     name = input("Name: ")
     phone = input("Phone: ")
     email = input("Email: ")
-    category = input("Category from (work/family/friend/other): ")
+    category = input("Category, choose from (work/family/friend/other): ")
     address = input("Address: ")
 
     new_contact = Contact(
@@ -225,6 +227,7 @@ def add_new_contact(user):
     go_back_logout(user)
 
 
+# common function for user to go to home page or logout after each action
 def go_back_logout(user):
     user_choice = input("Enter b to go back to Home page or l to logout : ")
     if user_choice.lower() == "b":

@@ -49,7 +49,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Roadmap
 
-More features can be added in future like User can send email to saved contacts, additional attributes can be added.
+More features can be added in future like User can send email to saved contacts, additional attributes (contact details) can be added and more contraints, validation can be added for email id, phone, username etc.
 
 ## License
 
